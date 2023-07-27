@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="main_container">
+        <div class="music_container">
+            <h2 id="title">FADED</h2>
+            <h3 id="author">Alian Walker</h3>
+            <div class="img_conntainer">
+                <img src="images/song (1).jpg" alt="Music Image">
+            </div>
+            <audio src="music/song (1).mp3"></audio>
+
+            <!-- progress bar  -->
+            <div class="progressbar_container" id="progressbar_container">
+                <div class="duration_meter">
+                    <div class="initial_duration" id="initial_duration">0:00</div>
+                    <div class="final_duration" id="final_duration">2:00</div>
+                </div>
+                <div class="progress_div" id="progress_div">
+                    <div class="progress" id="progress">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Play Buttons  -->
+            <div class="music_contols">
+                <i class="fa-solid fa-backward" id="prev" title="Previous"></i>
+                <i class="fa-solid fa-play" id="play" title="Play"></i>
+                <i class="fa-solid fa-forward" id="forward" title="forward"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const play = document.getElementById('play');
+        const img = document.querySelector('img');
+        const music = document.querySelector('audio');
+        const title = document.getElementById('title');
+        const author = document.getElementById('author');
+        const next = document.getElementById('forward');
+        const prev = document.getElementById('prev');
+        const final = document.getElementById('final_duration');
+        const start = document.getElementById('initial_duration');
+        const progress = document.getElementById('progress');
+        const progress_div = document.getElementById('progress_div');
+        const songs = [
+            {
+                name: "song (1)",
+                title: "FADED",
+                author: "Alian Walker"
+            },
+            {
+                name: "song (2)",
+                title: "MY HEART GOES ON",
+                author: "Celine Dion"
+            },
+            {
+                name: "song (3)",
+                title: "LET ME DOWN",
+                author: "Alec Benjamin"
+            }
+        ]
+        let Isplaying = false;
+
+        const PlayMusic = () => {
+            Isplaying = true;
+            music.play();
+            play.classList.replace("fa-play", "fa-pause");
+            img.classList.add("anime");
+
+        }
+
+        const PauseMusic = () => {
+            Isplaying = false;
+            music.pause();
+            play.classList.replace("fa-pause", "fa-play",);
+            img.classList.remove("anime");
+
+        }
+
+        play.addEventListener("click", () => {
+            if (Isplaying) {
+                PauseMusic();
+            }
+            else {
+                PlayMusic();
+            }
+        })
+
+        const loadSong = (songs) => {
+            title.textContent = songs.title;
+            author.textContent = songs.author;
+            music.src = "music/" + songs.name + ".mp3";
+            img.src = "images/" + songs.name + ".jpg";
+        }
+
+        songIndex = 0;
+
+        const NextSong = () => {
+            songIndex = (songIndex + 1) % songs.length;
+            loadSong(songs[songIndex]);
+            PlayMusic();
+        }
+        const PrevSong = () => {
+            songIndex = (songIndex - 1 + songs.length) % songs.length;
+            loadSong(songs[songIndex]);
+            PlayMusic();
+        }
+
+        music.addEventListener("timeupdate", (event) => {
+            const { currentTime, duration } = event.srcElement;
+            let progress_Time = (currentTime / duration) * 100;
+
+            progress.style.width = `${progress_Time}%`
+            if (duration) {
+                let minutes = Math.floor(duration / 60);
+                let seconds = Math.floor(duration % 60);
+
+                final.textContent = `${minutes}:${seconds}`;
+            }
+            let minutes = Math.floor(currentTime / 60);
+            let seconds = Math.floor(currentTime % 60);
+
+            if (seconds < 10) {
+                start.textContent = `${minutes}:0${seconds}`;
+            } else {
+                start.textContent = `${minutes}:${seconds}`;
+            }
+        })
+
+        progress_div.addEventListener("click", (event) => {
+            console.log(event);
+            let { duration } = music;
+            let move_progress = (event.offsetX / event.srcElement.clientWidth) * duration;
+
+            music.currentTime = move_progress;
+        })
+
+        music.addEventListener("ended", NextSong);
+        next.addEventListener("click", NextSong);
+        prev.addEventListener("click", PrevSong);
+
+    </script>
+</body>
+
+</html>
