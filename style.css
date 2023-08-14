@@ -20,7 +20,7 @@ html {
     height: 100vh;
     display: grid;
     place-items: center;
-    background-color: rgb(231, 232, 234);
+    background: linear-gradient(rgba(0,0,0,1) 0%, rgba(43,85,125,1) 39%, rgba(255,255,255,1) 100%);
    scroll-behavior: smooth;
 }
 
